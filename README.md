@@ -7,3 +7,7 @@
 4. 运行 `npm run build`
 5. 运行 `npm run preview`
 6. kindle 访问命令行出现的地址即可
+
+## 支持功能  
+- [x] 书架
+- [x] 阅读

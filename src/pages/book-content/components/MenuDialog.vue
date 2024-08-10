@@ -9,12 +9,12 @@
       </div>
       <div class="menu-item font-size">
         <div class="name">
-          <span :style="{fontSize: `${config.fontSize}px`}">字体大小：</span>
-          <span>{{ config.fontSize }}</span>
+          <span :style="{fontSize: `${state.config.fontSize}px`}">字体大小：</span>
+          <span>{{ state.config.fontSize }}</span>
         </div>
         <div class="control">
-          <button class="custom-button" @click="config.fontSize--">减小</button>
-          <button class="custom-button" @click="config.fontSize++">增大</button>
+          <button class="custom-button" @click="state.config.fontSize--">减小</button>
+          <button class="custom-button" @click="state.config.fontSize++">增大</button>
         </div>
       </div>
     </div>
@@ -22,11 +22,11 @@
 </template>
 
 <script setup lang="ts">
-import { config } from '../../../store';
+import { state } from '../../../store';
 import router from '../../../router/router.ts';
 
 interface Props {
-  visible: boolean
+  visible: boolean;
 }
 
 const props = defineProps<Props>();
@@ -34,16 +34,16 @@ const emits = defineEmits<{
   (e: 'update:visible', res: boolean): void
   (e: 'pre-chapter'): void
   (e: 'next-chapter'): void
-}>()
+}>();
 
 
 const handleClose = () => {
-  emits('update:visible', false)
-}
+  emits('update:visible', false);
+};
 const handleBack = () => {
   router.push('/');
   handleClose();
-}
+};
 </script>
 
 <style scoped lang="scss">

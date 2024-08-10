@@ -1,35 +1,35 @@
 <template>
-  <RouterView />
+  <RouterView/>
 </template>
 
 <script setup lang="ts">
-document.addEventListener('dblclick', function(event) {
+document.addEventListener('dblclick', function (event) {
   event.preventDefault();
   event.stopPropagation();
 }, true);
-document.addEventListener('scroll', function(event) {
+document.addEventListener('scroll', function (event) {
   event.preventDefault();
   event.stopPropagation();
 }, {
   capture: true,
-  passive: false
+  passive: false,
 });
-document.addEventListener('wheel', function(event) {
+document.addEventListener('wheel', function (event) {
   event.preventDefault();
   event.stopPropagation();
 }, {
   capture: true,
-  passive: false
+  passive: false,
 });
-document.addEventListener('touchmove', function(event) {
+document.addEventListener('touchmove', function (event) {
   event.preventDefault();
   event.stopPropagation();
 }, {
   capture: true,
-  passive: false
+  passive: false,
 });
-</script>
 
+</script>
 
 
 <style scoped>

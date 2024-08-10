@@ -19,26 +19,26 @@ import Book from './components/Book.vue';
 import { setCurrentReadBook } from '../../store';
 import router from '../../router/router.ts';
 
-const bookShelfRef = ref<HTMLDivElement>()
-const bookList = ref<BookInfo[]>([])
+const bookShelfRef = ref<HTMLDivElement>();
+const bookList = ref<BookInfo[]>([]);
 
 const handleBookClick = (res: BookInfo) => {
   setCurrentReadBook(res);
-  router.push('/book-content')
-}
+  router.push('/book-content');
+};
 const handleUp = () => {
   if (bookShelfRef.value) {
-    bookShelfRef.value.scrollTop -= 120
+    bookShelfRef.value.scrollTop -= 120;
   }
-}
+};
 const handleDown = () => {
   if (bookShelfRef.value) {
-    bookShelfRef.value.scrollTop += 120
+    bookShelfRef.value.scrollTop += 120;
   }
-}
+};
 onMounted(async () => {
   bookList.value = await getBookshelf();
-})
+});
 </script>
 
 <style lang="scss" scoped>

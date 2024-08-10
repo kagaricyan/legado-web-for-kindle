@@ -1,5 +1,5 @@
 export interface Response<T = any> {
-  data: T
+  data: T;
 }
 
 export interface Config {
@@ -8,7 +8,7 @@ export interface Config {
   fontSize: number;
   readWidth: number;
   infiniteLoading: boolean;
-  customFontName: string
+  customFontName: string;
 }
 
 export interface BookInfo {
@@ -47,13 +47,18 @@ export interface BookInfo {
 }
 
 export interface BookChapter {
-  baseUrl: string
-  bookUrl: string
-  index: number
-  isPay: boolean
-  isVip: boolean
-  isVolume: boolean
-  tag: string
-  title: string
-  url: string
+  baseUrl: string;
+  bookUrl: string;
+  index: number;
+  isPay: boolean;
+  isVip: boolean;
+  isVolume: boolean;
+  tag: string;
+  title: string;
+  url: string;
+}
+
+export interface BookChapterCache {
+  bookUrl: string;
+  chapterList: { index: number; title: string }[];
 }

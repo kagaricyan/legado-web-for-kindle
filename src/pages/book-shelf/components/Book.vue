@@ -30,21 +30,21 @@ import { computed } from 'vue';
 import { formatDate, getCover } from '../../../utils';
 
 interface Props {
-  book: BookInfo
+  book: BookInfo;
 }
 
 const props = defineProps<Props>();
 const emits = defineEmits<{
   (e: 'click', res: BookInfo): void
-}>()
+}>();
 const coverUrl = computed(() => {
-  const url = props.book.customCoverUrl || props.book.coverUrl
+  const url = props.book.customCoverUrl || props.book.coverUrl;
   return getCover(url);
-})
+});
 
 const handleClick = () => {
-  emits('click', props.book)
-}
+  emits('click', props.book);
+};
 </script>
 
 <style lang="scss" scoped>
