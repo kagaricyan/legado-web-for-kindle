@@ -1,17 +1,23 @@
 import axios from 'axios';
-import { BookChapter, BookInfo, Config, Response } from './types.ts';
+import { BookChapter, BookInfo, Config, ReadProgress, Response } from './types.ts';
 import { state } from '../store';
 
-const network = axios.create({
-  baseURL: state.value.config.serverUrl,
-});
+function getBaseUrl() {
+  const url = state.value.config.serverUrl;
+  if (url[url.length - 1] === '/') {
+    return url.slice(0, url.length - 1);
+  }
+  return url;
+}
 
 /**
  * 用户配置
  */
 export async function getConfig() {
   const url = '/getReadConfig';
-  const data = await network.get<Response<string>>(url);
+  const data = await axios.get<Response<string>>(url, {
+    baseURL: getBaseUrl(),
+  });
   return JSON.parse(data.data.data) as Config;
 }
 
@@ -20,7 +26,9 @@ export async function getConfig() {
  */
 export async function getBookshelf() {
   const url = '/getBookshelf';
-  const data = await network.get<Response<BookInfo[]>>(url);
+  const data = await axios.get<Response<BookInfo[]>>(url, {
+    baseURL: getBaseUrl(),
+  });
   return data.data.data;
 }
 
@@ -30,7 +38,7 @@ export async function getBookshelf() {
  */
 export async function getChapterList(bookUrl: string) {
   const url = '/getChapterList';
-  const data = await network.get<Response<BookChapter[]>>(url, { params: { url: bookUrl } });
+  const data = await axios.get<Response<BookChapter[]>>(url, { params: { url: bookUrl }, baseURL: getBaseUrl() });
   return data.data.data;
 }
 
@@ -41,20 +49,12 @@ export async function getChapterList(bookUrl: string) {
  */
 export async function getBookContent(bookUrl: string, index: number) {
   const url = '/getBookContent';
-  const data = await network.get<Response<string>>(url, { params: { url: bookUrl, index } });
+  const data = await axios.get<Response<string>>(url, { params: { url: bookUrl, index }, baseURL: getBaseUrl() });
   return data.data.data;
 }
 
-interface ReadProgress {
-  name: string
-  author: string
-  durChapterIndex: number
-  durChapterPos: number
-  durChapterTime: number
-  durChapterTitle: string
-}
 
 export function saveReadProgress(params: ReadProgress) {
   const url = '/saveBookProgress';
-  return network.post(url, params);
+  return axios.post(url, params, { baseURL: getBaseUrl() });
 }

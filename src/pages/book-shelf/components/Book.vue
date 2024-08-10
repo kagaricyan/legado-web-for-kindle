@@ -1,7 +1,7 @@
 <template>
   <div class="book" @click="handleClick">
     <div class="cover">
-      <img :src="coverUrl" alt="cover">
+      <img :src="book.coverUrl" alt="cover">
     </div>
     <div class="info">
       <div class="name">
@@ -37,10 +37,6 @@ const props = defineProps<Props>();
 const emits = defineEmits<{
   (e: 'click', res: BookInfo): void
 }>();
-const coverUrl = computed(() => {
-  const url = props.book.customCoverUrl || props.book.coverUrl;
-  return getCover(url);
-});
 
 const handleClick = () => {
   emits('click', props.book);

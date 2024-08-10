@@ -62,3 +62,11 @@ export interface BookChapterCache {
   bookUrl: string;
   chapterList: { index: number; title: string }[];
 }
+export interface ReadProgress {
+  name: string
+  author: string
+  durChapterIndex: number
+  durChapterPos: number
+  durChapterTime: number
+  durChapterTitle: string
+}
