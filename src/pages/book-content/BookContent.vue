@@ -31,7 +31,7 @@ import {
   updateCurrentReadChapter,
 } from '../../store';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
-import { getBookContent } from '../../api';
+import { getBookContent, saveReadProgress } from '../../api';
 import MenuDialog from './components/MenuDialog.vue';
 import { useDebounceFn, useToggle } from '@vueuse/core';
 import router from '../../router/router.ts';
@@ -108,13 +108,22 @@ const queryChapterContent = async (index: number) => {
   if (contentLoading.value) {
     return;
   }
-  const bookUrl = state.value.readingBook.bookUrl;
+  const readingBook = state.value.readingBook
+  const bookUrl = readingBook.bookUrl;
   bookContentStr.value = '';
   currentPage.value = 1;
   pages.value = [];
   updateCurrentReadChapter(index);
   try {
     toggleContentLoading(true);
+    await saveReadProgress({
+      name: readingBook.name,
+      author: readingBook.author,
+      durChapterIndex: index,
+      durChapterPos: 0,
+      durChapterTime: Date.now(),
+      durChapterTitle: currentChapterName.value
+    })
     const data = await getBookContent(bookUrl, index);
     bookContentStr.value = preHandleContent(data);
   } finally {

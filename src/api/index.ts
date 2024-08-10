@@ -46,15 +46,15 @@ export async function getBookContent(bookUrl: string, index: number) {
 }
 
 interface ReadProgress {
-  name: '武神主宰',
-  author: '暗魔师',
-  durChapterIndex: 7184,
-  durChapterPos: 0,
-  durChapterTime: 1723316403078,
-  durChapterTitle: '第5728章 古仙路'
+  name: string
+  author: string
+  durChapterIndex: number
+  durChapterPos: number
+  durChapterTime: number
+  durChapterTitle: string
 }
 
 export function saveReadProgress(params: ReadProgress) {
   const url = '/saveBookProgress';
-  return network.get(url, { params });
+  return network.post(url, params);
 }
