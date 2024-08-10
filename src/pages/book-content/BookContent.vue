@@ -20,7 +20,11 @@
       </template>
     </div>
   </div>
-  <menu-dialog v-model:visible="menuVisible"/>
+  <menu-dialog
+      v-model:visible="menuVisible"
+      @pre-chapter="queryChapterContent(state.readingBook.durChapterIndex-1)"
+      @next-chapter="queryChapterContent(state.readingBook.durChapterIndex+1)"
+  />
 </template>
 
 <script setup lang="ts">
@@ -108,7 +112,7 @@ const queryChapterContent = async (index: number) => {
   if (contentLoading.value) {
     return;
   }
-  const readingBook = state.value.readingBook
+  const readingBook = state.value.readingBook;
   const bookUrl = readingBook.bookUrl;
   bookContentStr.value = '';
   currentPage.value = 1;
@@ -122,8 +126,8 @@ const queryChapterContent = async (index: number) => {
       durChapterIndex: index,
       durChapterPos: 0,
       durChapterTime: Date.now(),
-      durChapterTitle: currentChapterName.value
-    })
+      durChapterTitle: currentChapterName.value,
+    });
     const data = await getBookContent(bookUrl, index);
     bookContentStr.value = preHandleContent(data);
   } finally {
