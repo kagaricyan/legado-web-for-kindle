@@ -167,13 +167,11 @@ onMounted(async () => {
     height: 100%;
 
     .loading {
-      color: #333;
       font-size: 24px;
       font-weight: bold;
     }
 
     p {
-      color: #333;
       line-height: 5vh;
       margin: 5vh 0;
       text-align: justify;
