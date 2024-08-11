@@ -6,7 +6,7 @@ export function padNum(s: number) {
 
 export function formatDate(s: string | number) {
   const date = new Date(s);
-  return `${date.getFullYear()}-${padNum(date.getMonth())}-${padNum(date.getDate())}`;
+  return `${date.getFullYear()}-${padNum(date.getMonth() + 1)}-${padNum(date.getDate())}`;
 }
 
 export function getCover(path: string) {
