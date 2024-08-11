@@ -135,11 +135,16 @@ const queryChapterContent = async (index: number) => {
   }
 };
 
-watch(() => [bookContentStr.value, currentChapterName.value], async () => {
+watch(() => {
+  const config = state.value.config;
+  return [bookContentStr.value, currentChapterName.value, config.fontSize, config.fontFamily];
+}, async () => {
   await nextTick();
-  if (bookContentRef.value) {
-    pages.value = collectPages(pageHeight, bookContentRef.value.querySelectorAll('.con > p'));
-  }
+  requestAnimationFrame(() => {
+    if (bookContentRef.value) {
+      pages.value = collectPages(pageHeight, bookContentRef.value.querySelectorAll('.con > p'));
+    }
+  });
 });
 
 onMounted(async () => {
@@ -172,7 +177,7 @@ onMounted(async () => {
     }
 
     p {
-      line-height: 5vh;
+      line-height: 1.2;
       margin: 5vh 0;
       text-align: justify;
 

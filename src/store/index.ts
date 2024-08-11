@@ -16,6 +16,7 @@ export const state = useStorage('state', {
   config: {
     fontSize: 24,
     serverUrl: '',
+    fontFamily: ''
   },
   readingBook: {} as BookInfo,
 });
