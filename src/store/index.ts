@@ -15,8 +15,8 @@ const isSupportIndexDB = 'indexedDB' in window;
 export const state = useStorage('state', {
   config: {
     fontSize: 24,
-    serverUrl: '',
-    fontFamily: '思源宋体',
+    serverUrl: 'http://192.168.31.205:1122',
+    fontFamily: '',
   },
   readingBook: {} as BookInfo,
 });

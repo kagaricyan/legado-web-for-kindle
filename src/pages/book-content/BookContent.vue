@@ -1,9 +1,13 @@
 <template>
   <div class="book-content" @click.stop="pageHandler">
     <div class="read-box"
-         :style="{fontSize: `${state.config.fontSize}px`, fontFamily: state.config.fontFamily }">
-      <template v-for="e in currentPageElements">
-        <p class="real-render" :class="e.className">{{ e.innerText }}</p>
+         :style="{fontSize: `${state.config.fontSize}px`}">
+      <template v-for="e in currentPage1">
+        <p class="real-render" :class="{
+          'part-paragraph-start': e.tag==='start',
+          'part-paragraph-center': e.tag==='center',
+          'part-paragraph-end': e.tag==='end',
+        }">{{ e.text }}</p>
       </template>
       <template v-if="chapterLoading||contentLoading">
         <div class="loading">加载中...</div>
@@ -43,6 +47,7 @@ import MenuDialog from './components/MenuDialog.vue';
 import { useDebounceFn, useToggle } from '@vueuse/core';
 import router from '../../router/router.ts';
 import { collectPages, preHandleContent } from '../../utils';
+import { PageLine, parserNovel, ParserNovelOption } from '../../utils/novel.ts';
 
 // 菜单弹窗
 const [menuVisible, toggleMenuVisible] = useToggle();
@@ -51,12 +56,12 @@ const bookContentRef = ref<HTMLDivElement>();
 // 章节内容
 const bookContentStr = ref('');
 // 页面高度
-const pageHeight = Math.floor(window.innerHeight / 100 * 90);
-
+const pageHeight = window.innerHeight - 20;
+const pageWidth = Math.floor(window.innerWidth - 40);
 const [chapterLoading, toggleChapterLoading] = useToggle();
 const [contentLoading, toggleContentLoading] = useToggle();
 const pageHandler = useDebounceFn((e: MouseEvent) => handlePage(e), 300);
-
+const pages1 = ref<PageLine[][]>([]);
 const currentChapterList = computed(() => {
   const bookUrl = state.value.readingBook.bookUrl;
   return chapterListCache.value.find(i => i.bookUrl === bookUrl)?.chapterList;
@@ -76,9 +81,11 @@ const pages = ref<HTMLElement[][]>([]);
 const currentPageElements = computed(() => {
   return pages.value[currentPage.value - 1] || [];
 });
+const currentPage1 = computed(() => {
+  return pages1.value[currentPage.value - 1] || [];
+});
 const handlePage = async (e: MouseEvent) => {
   if (chapterLoading.value) return;
-
   if (e.clientX < 150) {
     if (bookContentRef.value) {
       if (currentPage.value !== 1) {
@@ -137,17 +144,28 @@ const queryChapterContent = async (index: number) => {
     toggleContentLoading(false);
   }
 };
-
 watch(() => {
   const config = state.value.config;
   return [bookContentStr.value, currentChapterName.value, config.fontSize, config.fontFamily];
 }, async () => {
   await nextTick();
-  requestAnimationFrame(() => {
-    if (bookContentRef.value) {
-      pages.value = collectPages(pageHeight, bookContentRef.value.querySelectorAll('.con > p'));
-    }
-  });
+  if (currentChapterName.value) {
+    requestAnimationFrame(() => {
+      if (bookContentRef.value) {
+        const options: ParserNovelOption = {
+          text: `${currentChapterName.value}\n${bookContentStr.value}`,
+          fontFamily: state.value.config.fontFamily,
+          fontSize: state.value.config.fontSize,
+          pageHeight,
+          paragraphMargin: 24,
+          lineHeight: 1.2,
+          lineWidth: pageWidth,
+        };
+        pages1.value = parserNovel(options);
+      }
+    });
+
+  }
 });
 
 onMounted(async () => {
@@ -181,7 +199,6 @@ onMounted(async () => {
 
     p {
       line-height: 1.2;
-      margin: 5vh 0;
       text-align: justify;
 
       &.pre-render:not(.real-render) {
@@ -190,6 +207,7 @@ onMounted(async () => {
 
       &.part-paragraph-start {
         margin-bottom: 0;
+        text-indent: 2em;
       }
 
       &.part-paragraph-center {
@@ -198,6 +216,7 @@ onMounted(async () => {
 
       &.part-paragraph-end {
         margin-top: 0;
+        margin-bottom: 0;
       }
     }
   }
