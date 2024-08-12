@@ -1,6 +1,7 @@
 <template>
   <div class="book-content" @click.stop="pageHandler">
-    <div class="read-box" :style="{fontSize: `${state.config.fontSize}px`}">
+    <div class="read-box"
+         :style="{fontSize: `${state.config.fontSize}px`, fontFamily: state.config.fontFamily }">
       <template v-for="e in currentPageElements">
         <p class="real-render" :class="e.className">{{ e.innerText }}</p>
       </template>
@@ -8,7 +9,9 @@
         <div class="loading">加载中...</div>
       </template>
     </div>
-    <div class="con" ref="bookContentRef" :style="{fontSize: `${state.config.fontSize}px`}">
+    <div class="con"
+         ref="bookContentRef"
+         :style="{fontSize: `${state.config.fontSize}px`, fontFamily: state.config.fontFamily}">
       <p>{{ currentChapterName }}</p>
       <template v-for="s in bookContentStr.split('\n')">
         <p class="pre-render" :class="{

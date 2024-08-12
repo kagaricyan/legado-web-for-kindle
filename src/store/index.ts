@@ -16,7 +16,7 @@ export const state = useStorage('state', {
   config: {
     fontSize: 24,
     serverUrl: '',
-    fontFamily: ''
+    fontFamily: '思源宋体',
   },
   readingBook: {} as BookInfo,
 });
