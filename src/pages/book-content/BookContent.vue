@@ -1,67 +1,48 @@
 <template>
   <div class="book-content" @click.stop="pageHandler">
-    <div class="read-box"
-         :style="{fontSize: `${state.config.fontSize}px`}">
-      <template v-for="e in currentPage1">
-        <p class="real-render" :class="{
-          'part-paragraph-start': e.tag==='start',
-          'part-paragraph-center': e.tag==='center',
-          'part-paragraph-end': e.tag==='end',
-        }">{{ e.text }}</p>
-      </template>
-      <template v-if="chapterLoading||contentLoading">
-        <div class="loading">加载中...</div>
-      </template>
-    </div>
-    <div class="con"
-         ref="bookContentRef"
-         :style="{fontSize: `${state.config.fontSize}px`, fontFamily: state.config.fontFamily}">
-      <p>{{ currentChapterName }}</p>
-      <template v-for="s in bookContentStr.split('\n')">
-        <p class="pre-render" :class="{
-          'part-paragraph-start': s.includes('partParagraphStart'),
-          'part-paragraph-center': s.includes('partParagraphCenter'),
-          'part-paragraph-end': s.includes('partParagraphEnd'),
-          }">
-          {{ s.replace(/(partParagraphStart|partParagraphCenter|partParagraphEnd)/, '') }}</p>
-      </template>
+    <div class="page"
+         :style="{fontSize: `${state.config.fontSize}px`, bottom: `calc(11px + ${currentPageInfo.maskHeight}px)`}">
+      <div class="book-content-container" ref="bookContentContainer"
+           :style="{transform: `translateY(-${currentPageInfo.scrollY}px)`}">
+        <p><span>{{ currentChapterName }}</span></p>
+        <template v-if="chapterLoading||contentLoading">
+          <div class="loading"><span>加载中...</span></div>
+        </template>
+        <template v-for="s in bookContentStr.split('\n')">
+          <p><span>{{ s }}</span></p>
+        </template>
+      </div>
     </div>
   </div>
   <menu-dialog
       v-model:visible="menuVisible"
-      @pre-chapter="queryChapterContent(state.readingBook.durChapterIndex-1)"
-      @next-chapter="queryChapterContent(state.readingBook.durChapterIndex+1)"
+      @pre-chapter="queryContent(state.readingBook.durChapterIndex-1)"
+      @next-chapter="queryContent(state.readingBook.durChapterIndex+1)"
   />
 </template>
 
 <script setup lang="ts">
-import {
-  chapterListCache,
-  queryBookChapters,
-  state,
-  updateCurrentReadChapter,
-} from '../../store';
+import { chapterListCache, queryBookChapters, state, updateCurrentReadChapter } from '../../store';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import { getBookContent, saveReadProgress } from '../../api';
 import MenuDialog from './components/MenuDialog.vue';
 import { useDebounceFn, useToggle } from '@vueuse/core';
 import router from '../../router/router.ts';
-import { collectPages, preHandleContent } from '../../utils';
-import { PageLine, parserNovel, ParserNovelOption } from '../../utils/novel.ts';
+import { preHandleContent } from '../../utils';
+import { createPage, PageInfo } from '../../utils/novel.ts';
 
 // 菜单弹窗
 const [menuVisible, toggleMenuVisible] = useToggle();
 // 文本区容器，控制翻页
-const bookContentRef = ref<HTMLDivElement>();
+const bookContentContainer = ref<HTMLDivElement>();
 // 章节内容
 const bookContentStr = ref('');
 // 页面高度
-const pageHeight = window.innerHeight - 20;
-const pageWidth = Math.floor(window.innerWidth - 40);
+const pageBottomY = window.innerHeight - 10;
 const [chapterLoading, toggleChapterLoading] = useToggle();
 const [contentLoading, toggleContentLoading] = useToggle();
 const pageHandler = useDebounceFn((e: MouseEvent) => handlePage(e), 300);
-const pages1 = ref<PageLine[][]>([]);
+
 const currentChapterList = computed(() => {
   const bookUrl = state.value.readingBook.bookUrl;
   return chapterListCache.value.find(i => i.bookUrl === bookUrl)?.chapterList;
@@ -77,29 +58,26 @@ const currentChapterName = computed(() => {
  * @param e 点击事件
  */
 const currentPage = ref(1);
-const pages = ref<HTMLElement[][]>([]);
-const currentPageElements = computed(() => {
-  return pages.value[currentPage.value - 1] || [];
-});
-const currentPage1 = computed(() => {
-  return pages1.value[currentPage.value - 1] || [];
+const pages = ref<PageInfo[]>([]);
+const currentPageInfo = computed(() => {
+  return pages.value[currentPage.value - 1] || {};
 });
 const handlePage = async (e: MouseEvent) => {
   if (chapterLoading.value) return;
   if (e.clientX < 150) {
-    if (bookContentRef.value) {
+    if (bookContentContainer.value) {
       if (currentPage.value !== 1) {
         currentPage.value--;
       } else {
-        await queryChapterContent(state.value.readingBook.durChapterIndex - 1);
+        await queryContent(state.value.readingBook.durChapterIndex - 1);
       }
     }
   } else if (e.clientX > window.innerWidth - 150) {
-    if (bookContentRef.value) {
+    if (bookContentContainer.value) {
       if (currentPage.value !== pages.value.length) {
         currentPage.value++;
       } else {
-        await queryChapterContent(state.value.readingBook.durChapterIndex + 1);
+        await queryContent(state.value.readingBook.durChapterIndex + 1);
       }
     }
   } else {
@@ -118,7 +96,7 @@ const queryChapterList = async () => {
  * 查询章节内容
  * @param index
  */
-const queryChapterContent = async (index: number) => {
+const queryContent = async (index: number) => {
   if (contentLoading.value) {
     return;
   }
@@ -151,20 +129,10 @@ watch(() => {
   await nextTick();
   if (currentChapterName.value) {
     requestAnimationFrame(() => {
-      if (bookContentRef.value) {
-        const options: ParserNovelOption = {
-          text: `${currentChapterName.value}\n${bookContentStr.value}`,
-          fontFamily: state.value.config.fontFamily,
-          fontSize: state.value.config.fontSize,
-          pageHeight,
-          paragraphMargin: 24,
-          lineHeight: 1.2,
-          lineWidth: pageWidth,
-        };
-        pages1.value = parserNovel(options);
+      if (bookContentContainer.value) {
+        pages.value = createPage(bookContentContainer.value, pageBottomY);
       }
     });
-
   }
 });
 
@@ -175,7 +143,7 @@ onMounted(async () => {
     return;
   }
   await queryChapterList();
-  await queryChapterContent(state.value.readingBook.durChapterIndex);
+  await queryContent(state.value.readingBook.durChapterIndex);
 });
 </script>
 
@@ -187,38 +155,30 @@ onMounted(async () => {
   box-sizing: border-box;
   padding: 10px 20px;
 
-  .con, .read-box {
-    overflow: auto;
-    width: 100%;
-    height: 100%;
+  .page {
+    position: fixed;
+    top: 10px;
+    right: 20px;
+    bottom: 10px;
+    left: 20px;
+    overflow: hidden;
+    box-sizing: border-box;
+    background-color: #fff;
 
-    .loading {
-      font-size: 24px;
-      font-weight: bold;
-    }
+    .book-content-container {
+      overflow: hidden;
 
-    p {
-      line-height: 1.2;
-      text-align: justify;
-
-      &.pre-render:not(.real-render) {
-        opacity: 0;
+      .loading {
+        font-size: 24px;
+        font-weight: bold;
       }
 
-      &.part-paragraph-start {
-        margin-bottom: 0;
-        text-indent: 2em;
-      }
-
-      &.part-paragraph-center {
-        margin: 0;
-      }
-
-      &.part-paragraph-end {
-        margin-top: 0;
-        margin-bottom: 0;
+      p {
+        text-align: justify;
+        line-height: 1.2;
       }
     }
+
   }
 }
 </style>
