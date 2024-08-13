@@ -29,13 +29,11 @@ import { getBookContent, saveReadProgress } from '../../api';
 import MenuDialog from './components/MenuDialog.vue';
 import { useDebounceFn, useToggle } from '@vueuse/core';
 import router from '../../router/router.ts';
-import { preHandleContent } from '../../utils';
 import { createPage, PageInfo } from '../../utils/novel.ts';
 
 const computedPageStyle = computed(() => {
   const config = state.value.config;
   return {
-    // 由于精度问题，多给1px遮挡底部半截文字
     bottom: `calc(10px + ${currentPageInfo.value.maskHeight}px)`,
     fontSize: `${config.fontSize}px`,
     fontFamily: config.fontFamily,
@@ -135,8 +133,7 @@ const queryContent = async (index: number) => {
       durChapterTime: Date.now(),
       durChapterTitle: currentChapterName.value,
     });
-    const data = await getBookContent(bookUrl, index);
-    bookContentStr.value = preHandleContent(data);
+    bookContentStr.value = await getBookContent(bookUrl, index);
   } finally {
     toggleContentLoading(false);
   }
