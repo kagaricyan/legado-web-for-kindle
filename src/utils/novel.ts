@@ -29,9 +29,9 @@ export function createPage(container: HTMLElement, pageBottomY: number) {
     // 上一页
     const lastPage = pageInfos[pageInfos.length - 1];
     if (line.y - lastPage.scrollY > pageBottomY) {
-      pageInfos.push({ scrollY: line.y - 10, maskHeight: 0 });
+      pageInfos.push({ scrollY: line.y - 6, maskHeight: 0 });
     } else if (line.y - lastPage.scrollY + line.height > pageBottomY) {
-      pageInfos.push({ scrollY: line.y - 10, maskHeight: 0 });
+      pageInfos.push({ scrollY: line.y - 6, maskHeight: 0 });
       lastPage.maskHeight = line.height - (line.y - lastPage.scrollY + line.height - pageBottomY);
     }
   });

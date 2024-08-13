@@ -1,9 +1,10 @@
 <template>
   <div class="book-content" @click.stop="pageHandler">
-    <div class="page"
-         :style="{fontSize: `${state.config.fontSize}px`, bottom: `calc(11px + ${currentPageInfo.maskHeight}px)`}">
-      <div class="book-content-container" ref="bookContentContainer"
-           :style="{transform: `translateY(-${currentPageInfo.scrollY}px)`}">
+    <div class="page" :style="computedPageStyle">
+      <!--完整文章区域，通过 translateY 向上移动，实现翻页-->
+      <div class="book-content-container"
+           ref="bookContentContainer"
+           :style="computedContentContainerStyle">
         <p><span>{{ currentChapterName }}</span></p>
         <template v-if="chapterLoading||contentLoading">
           <div class="loading"><span>加载中...</span></div>
@@ -31,6 +32,21 @@ import router from '../../router/router.ts';
 import { preHandleContent } from '../../utils';
 import { createPage, PageInfo } from '../../utils/novel.ts';
 
+const computedPageStyle = computed(() => {
+  const config = state.value.config;
+  return {
+    // 由于精度问题，多给1px遮挡底部半截文字
+    bottom: `calc(10px + ${currentPageInfo.value.maskHeight}px)`,
+    fontSize: `${config.fontSize}px`,
+    fontFamily: config.fontFamily,
+  };
+});
+
+const computedContentContainerStyle = computed(() => {
+  return {
+    transform: `translateY(-${currentPageInfo.value.scrollY}px)`,
+  };
+});
 // 菜单弹窗
 const [menuVisible, toggleMenuVisible] = useToggle();
 // 文本区容器，控制翻页
@@ -38,7 +54,7 @@ const bookContentContainer = ref<HTMLDivElement>();
 // 章节内容
 const bookContentStr = ref('');
 // 页面高度
-const pageBottomY = window.innerHeight - 10;
+const pageBottomY = window.innerHeight - 11;
 const [chapterLoading, toggleChapterLoading] = useToggle();
 const [contentLoading, toggleContentLoading] = useToggle();
 const pageHandler = useDebounceFn((e: MouseEvent) => handlePage(e), 300);
@@ -64,7 +80,8 @@ const currentPageInfo = computed(() => {
 });
 const handlePage = async (e: MouseEvent) => {
   if (chapterLoading.value) return;
-  if (e.clientX < 150) {
+  // 点击位置小于1/3，上翻页
+  if (e.clientX < window.innerWidth / 3) {
     if (bookContentContainer.value) {
       if (currentPage.value !== 1) {
         currentPage.value--;
@@ -72,7 +89,9 @@ const handlePage = async (e: MouseEvent) => {
         await queryContent(state.value.readingBook.durChapterIndex - 1);
       }
     }
-  } else if (e.clientX > window.innerWidth - 150) {
+  }
+  // 点击位置大于2/3，下翻页
+  else if (e.clientX > window.innerWidth * 2 / 3) {
     if (bookContentContainer.value) {
       if (currentPage.value !== pages.value.length) {
         currentPage.value++;
@@ -126,6 +145,7 @@ watch(() => {
   const config = state.value.config;
   return [bookContentStr.value, currentChapterName.value, config.fontSize, config.fontFamily];
 }, async () => {
+  currentPage.value = 1;
   await nextTick();
   if (currentChapterName.value) {
     requestAnimationFrame(() => {
