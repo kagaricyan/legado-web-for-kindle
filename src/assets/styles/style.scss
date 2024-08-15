@@ -13,18 +13,20 @@ html, body {
   bottom: 0;
   left: 0;
   overflow: hidden;
+  background-color: #fff;
 }
 
 *::-webkit-scrollbar {
   display: none;
 }
 
-@font-face {
-  font-family: '思源宋体';
-  src: url("../fonts/SourceHanSerifSC-Regular.otf") format('opentype');
-  font-style: normal;
-  font-weight: normal;
-}
+//@font-face {
+//  font-family: '思源宋体';
+//  src: url("../fonts/思源宋体.ttf") format('truetype');
+//  src: url("../fonts/思源宋体.otf") format('opentype');
+//  font-style: normal;
+//  font-weight: normal;
+//}
 
 .custom-button {
   all: unset;
@@ -38,4 +40,5 @@ html, body {
   border: solid 2px #666;
   border-radius: 4px;
   margin-left: 10px;
+  background-color: #fff;
 }
