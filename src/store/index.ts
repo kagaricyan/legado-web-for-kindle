@@ -57,7 +57,24 @@ export const queryBookChapters = async () => {
   }
   await localforage.setItem('chapter-list', toRaw(chapterListCache.value));
 };
-
+export const syncBookChapters = async () => {
+  const bookUrl = state.value.readingBook.bookUrl;
+  const chapterList = await getChapterList(bookUrl);
+  const cache = {
+    bookUrl,
+    chapterList: chapterList.map(i => ({
+      index: i.index,
+      title: i.title,
+    })),
+  };
+  const index = chapterListCache.value.findIndex(item => item.bookUrl === bookUrl);
+  if (index !== -1) {
+    chapterListCache.value.splice(index, 1, cache);
+  } else {
+    chapterListCache.value.push(cache);
+  }
+  await localforage.setItem('chapter-list', toRaw(chapterListCache.value));
+};
 export const recoverFromLocalForage = async () => {
   chapterListCache.value = await localforage.getItem('chapter-list') || [];
 };

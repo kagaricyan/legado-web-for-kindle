@@ -9,6 +9,14 @@
         <template v-if="chapterLoading||contentLoading">
           <div class="loading"><span>加载中...</span></div>
         </template>
+        <template v-else-if="isChapterNotFound">
+          <p>
+            <span style="text-decoration: underline"
+                  @click.stop="handleSyncChapters">
+              未获取到章节内容, 点击同步最新章节
+            </span>
+          </p>
+        </template>
         <template v-for="s in bookContentStr.split('\n')">
           <p><span>{{ s }}</span></p>
         </template>
@@ -23,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import { chapterListCache, queryBookChapters, state, updateCurrentReadChapter } from '../../store';
+import { chapterListCache, queryBookChapters, state, syncBookChapters, updateCurrentReadChapter } from '../../store';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import { getBookContent, saveReadProgress } from '../../api';
 import MenuDialog from './components/MenuDialog.vue';
@@ -34,7 +42,7 @@ import { createPage, PageInfo } from '../../utils/novel.ts';
 const computedPageStyle = computed(() => {
   const config = state.value.config;
   return {
-    bottom: `calc(10px + ${currentPageInfo.value.maskHeight}px)`,
+    bottom: `calc(10px + ${currentPageInfo.value.maskHeight ?? 0}px)`,
     fontSize: `${config.fontSize}px`,
     fontFamily: config.fontFamily,
   };
@@ -42,7 +50,7 @@ const computedPageStyle = computed(() => {
 
 const computedContentContainerStyle = computed(() => {
   return {
-    transform: `translateY(-${currentPageInfo.value.scrollY}px)`,
+    transform: `translateY(-${currentPageInfo.value.scrollY ?? 0}px)`,
   };
 });
 // 菜单弹窗
@@ -61,9 +69,13 @@ const currentChapterList = computed(() => {
   const bookUrl = state.value.readingBook.bookUrl;
   return chapterListCache.value.find(i => i.bookUrl === bookUrl)?.chapterList;
 });
+const isChapterNotFound = computed(() => {
+  const index = state.value.readingBook.durChapterIndex;
+  return !currentChapterList.value?.some(i => i.index === index);
+});
 const currentChapterName = computed(() => {
   const index = state.value.readingBook.durChapterIndex;
-  return currentChapterList.value?.find(i => i.index === index)?.title || '';
+  return currentChapterList.value?.find(i => i.index === index)?.title || `第${index}章`;
 });
 
 /**
@@ -76,6 +88,15 @@ const pages = ref<PageInfo[]>([]);
 const currentPageInfo = computed(() => {
   return pages.value[currentPage.value - 1] || {};
 });
+const handleSyncChapters = async () => {
+  try {
+    toggleChapterLoading(true);
+    await syncBookChapters();
+  } finally {
+    toggleChapterLoading(false);
+  }
+  await queryContent(state.value.readingBook.durChapterIndex);
+};
 const handlePage = async (e: MouseEvent) => {
   if (chapterLoading.value) return;
   // 点击位置小于1/3，上翻页
@@ -91,7 +112,7 @@ const handlePage = async (e: MouseEvent) => {
   // 点击位置大于2/3，下翻页
   else if (e.clientX > window.innerWidth * 2 / 3) {
     if (bookContentContainer.value) {
-      if (currentPage.value !== pages.value.length) {
+      if (pages.value.length > 0 && currentPage.value !== pages.value.length) {
         currentPage.value++;
       } else {
         await queryContent(state.value.readingBook.durChapterIndex + 1);
@@ -123,6 +144,10 @@ const queryContent = async (index: number) => {
   currentPage.value = 1;
   pages.value = [];
   updateCurrentReadChapter(index);
+
+  if (!currentChapterList.value?.some(i => i.index === index)) {
+    return;
+  }
   try {
     toggleContentLoading(true);
     await saveReadProgress({
