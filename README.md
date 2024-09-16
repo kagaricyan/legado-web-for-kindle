@@ -31,4 +31,6 @@
 - 字体文件在`public/fonts`下，默认提供的是思源黑体
 - 字体加载在 `src/assets/styles/style.scss`27行，替换自己的字体后，将这里的字体文件名改成对应的即可
 
+## [变更记录][changelog]
 
+[changelog]: CHANGELOG.md
