@@ -28,7 +28,7 @@ import { onMounted, ref } from 'vue';
 import { BookInfo } from '../../api/types.ts';
 import { getBookshelf } from '../../api';
 import Book from './components/Book.vue';
-import { setCurrentReadBook, state } from '../../store';
+import { saveConfig, setCurrentReadBook, state } from '../../store';
 import router from '../../router/router.ts';
 import { getCover } from '../../utils';
 import { useToggle } from '@vueuse/core';
@@ -58,6 +58,7 @@ const handleDown = () => {
 const [bookShelfLoading, toggleBookShelfLoading] = useToggle();
 const queryBookShelf = async () => {
   try {
+    saveConfig();
     toggleBookShelfLoading(true);
     bookList.value = [];
     const data = await getBookshelf();

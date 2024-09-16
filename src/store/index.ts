@@ -28,9 +28,13 @@ try {
 }
 export const chapterListCache = ref<BookChapterCache[]>([]);
 
+export function saveConfig() {
+  localStorage.setItem('state', JSON.stringify(toRaw(state)));
+}
+
 export const setCurrentReadBook = (book: BookInfo) => {
   state.readingBook = book;
-  localStorage.setItem('state', JSON.stringify(toRaw(state)));
+  saveConfig();
 };
 /**
  * 下一章、上一章时，更新当前书籍的章节
@@ -38,7 +42,7 @@ export const setCurrentReadBook = (book: BookInfo) => {
  */
 export const updateCurrentReadChapter = (index: number) => {
   state.readingBook.durChapterIndex = index;
-  localStorage.setItem('state', JSON.stringify(toRaw(state)));
+  saveConfig()
 };
 /**
  * 查询书籍章节列表
