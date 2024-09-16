@@ -60,7 +60,7 @@ const bookContentContainer = ref<HTMLDivElement>();
 // 章节内容
 const bookContentStr = ref('');
 // 页面高度
-const pageBottomY = window.innerHeight - 12;
+const pageBottomY = window.innerHeight - 10;
 const [chapterLoading, toggleChapterLoading] = useToggle();
 const [contentLoading, toggleContentLoading] = useToggle();
 const pageHandler = useDebounceFn((e: MouseEvent) => handlePage(e), 300);
@@ -217,7 +217,7 @@ onMounted(async () => {
 
       p {
         text-align: justify;
-        line-height: 1.2;
+        line-height: 1.3;
       }
     }
 
