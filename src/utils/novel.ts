@@ -32,7 +32,7 @@ export function createPage(container: HTMLElement, pageBottomY: number) {
       pageInfos.push({ scrollY: line.y - 10, maskHeight: 0 });
     } else if (line.y - lastPage.scrollY + line.height > pageBottomY) {
       pageInfos.push({ scrollY: line.y - 10, maskHeight: 0 });
-      lastPage.maskHeight = line.height - (line.y - lastPage.scrollY + line.height - pageBottomY);
+      lastPage.maskHeight = 1 + line.height - (line.y - lastPage.scrollY + line.height - pageBottomY);
     }
   });
   return pageInfos;
