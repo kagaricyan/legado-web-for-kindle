@@ -2,8 +2,8 @@
 
 ## 使用方式 - 打包进 app 里
 
-1. 下载解压 `release/html.zip`,将解压后的`html/dist/`下的所有文件放到该目录下
-2. 使用MT管理器，打开阅读app apk文件，找到`assets/web/vue/`,清空该目录，然后把第一步解压的文件放到该目录下,
+1. 下载解压 `release/html.zip`
+2. 使用MT管理器，打开阅读app apk文件，找到`assets/web/vue/`,清空该目录，然后把第一步解压的`html/dist/`下的所有文件放到该目录下
 3. 重新安装 apk 即可
 
 ## 本地启动访问
