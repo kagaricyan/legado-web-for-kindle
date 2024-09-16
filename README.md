@@ -1,16 +1,18 @@
 # 阅读APP Web 服务 For kindle
 
-## 使用-方式一
+## 使用方式 - 打包进 app 里
+
+1. 下载解压 `release/html.zip`,将解压后的`html/dist/`下的所有文件放到该目录下
+2. 使用MT管理器，打开阅读app apk文件，找到`assets/web/vue/`,清空该目录，然后把第一步解压的文件放到该目录下,
+3. 重新安装 apk 即可
+
+## 本地启动访问
 
 1. 前提：本项目运行与手机与kindle在同一个局域网下！！！
 2. 运行 `npm i`
 3. 运行 `npm run build`
 4. 运行 `npm run preview`
 5. kindle 访问命令行出现的地址即可
-
-## 使用-方式二
-
-release/html.zip为最新发布，可直接部署该静态资源到自己的服务器或github pages等
 
 ## 支持功能
 
