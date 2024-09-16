@@ -10,5 +10,5 @@ export function formatDate(s: string | number) {
 }
 
 export function getCover(path: string) {
-  return `${state.value.config.serverUrl}/cover?path=${path}`;
+  return `${state.config.serverUrl}/cover?path=${path}`;
 }

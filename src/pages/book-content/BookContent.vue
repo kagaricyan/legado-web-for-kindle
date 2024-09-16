@@ -40,7 +40,7 @@ import router from '../../router/router.ts';
 import { createPage, PageInfo } from '../../utils/novel.ts';
 
 const computedPageStyle = computed(() => {
-  const config = state.value.config;
+  const config = state.config;
   return {
     bottom: `calc(10px + ${currentPageInfo.value.maskHeight ?? 0}px)`,
     fontSize: `${config.fontSize}px`,
@@ -60,21 +60,21 @@ const bookContentContainer = ref<HTMLDivElement>();
 // 章节内容
 const bookContentStr = ref('');
 // 页面高度
-const pageBottomY = window.innerHeight - 10;
+const pageBottomY = window.innerHeight - 12;
 const [chapterLoading, toggleChapterLoading] = useToggle();
 const [contentLoading, toggleContentLoading] = useToggle();
 const pageHandler = useDebounceFn((e: MouseEvent) => handlePage(e), 300);
 
 const currentChapterList = computed(() => {
-  const bookUrl = state.value.readingBook.bookUrl;
+  const bookUrl = state.readingBook.bookUrl;
   return chapterListCache.value.find(i => i.bookUrl === bookUrl)?.chapterList;
 });
 const isChapterNotFound = computed(() => {
-  const index = state.value.readingBook.durChapterIndex;
+  const index = state.readingBook.durChapterIndex;
   return !currentChapterList.value?.some(i => i.index === index);
 });
 const currentChapterName = computed(() => {
-  const index = state.value.readingBook.durChapterIndex;
+  const index = state.readingBook.durChapterIndex;
   return currentChapterList.value?.find(i => i.index === index)?.title || `第${index}章`;
 });
 
@@ -95,7 +95,7 @@ const handleSyncChapters = async () => {
   } finally {
     toggleChapterLoading(false);
   }
-  await queryContent(state.value.readingBook.durChapterIndex);
+  await queryContent(state.readingBook.durChapterIndex);
 };
 const handlePage = async (e: MouseEvent) => {
   if (chapterLoading.value) return;
@@ -105,7 +105,7 @@ const handlePage = async (e: MouseEvent) => {
       if (currentPage.value !== 1) {
         currentPage.value--;
       } else {
-        await queryContent(state.value.readingBook.durChapterIndex - 1);
+        await queryContent(state.readingBook.durChapterIndex - 1);
       }
     }
   }
@@ -115,7 +115,7 @@ const handlePage = async (e: MouseEvent) => {
       if (pages.value.length > 0 && currentPage.value !== pages.value.length) {
         currentPage.value++;
       } else {
-        await queryContent(state.value.readingBook.durChapterIndex + 1);
+        await queryContent(state.readingBook.durChapterIndex + 1);
       }
     }
   } else {
@@ -138,7 +138,7 @@ const queryContent = async (index: number) => {
   if (contentLoading.value) {
     return;
   }
-  const readingBook = state.value.readingBook;
+  const readingBook = state.readingBook;
   const bookUrl = readingBook.bookUrl;
   bookContentStr.value = '';
   currentPage.value = 1;
@@ -164,7 +164,7 @@ const queryContent = async (index: number) => {
   }
 };
 watch(() => {
-  const config = state.value.config;
+  const config = state.config;
   return [bookContentStr.value, currentChapterName.value, config.fontSize, config.fontFamily];
 }, async () => {
   currentPage.value = 1;
@@ -179,13 +179,13 @@ watch(() => {
 });
 
 onMounted(async () => {
-  const bookUrl = state.value.readingBook.bookUrl;
+  const bookUrl = state.readingBook.bookUrl;
   if (!bookUrl) {
     await router.push('/');
     return;
   }
   await queryChapterList();
-  await queryContent(state.value.readingBook.durChapterIndex);
+  await queryContent(state.readingBook.durChapterIndex);
 });
 </script>
 

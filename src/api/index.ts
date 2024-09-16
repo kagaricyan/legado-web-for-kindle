@@ -3,7 +3,7 @@ import { BookChapter, BookInfo, Config, ReadProgress, Response } from './types.t
 import { state } from '../store';
 
 function getBaseUrl() {
-  const url = state.value.config.serverUrl;
+  const url = state.config.serverUrl;
   if (url[url.length - 1] === '/') {
     return url.slice(0, url.length - 1);
   }
