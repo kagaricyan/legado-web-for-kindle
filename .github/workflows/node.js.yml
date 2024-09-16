@@ -27,7 +27,9 @@ jobs:
     - run: npm run build --if-present
     - run: zip -r html.zip dist
     - name: Create Release  
-      uses: softprops/action-gh-release@v1  
+      uses: softprops/action-gh-release@v1
+      permissions:
+        contents: write
       with:  
         files: html.zip
 
