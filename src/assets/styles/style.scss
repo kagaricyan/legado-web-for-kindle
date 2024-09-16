@@ -20,13 +20,16 @@ html, body {
   display: none;
 }
 
-//@font-face {
-//  font-family: '思源宋体';
-//  src: url("../fonts/思源宋体.ttf") format('truetype');
-//  src: url("../fonts/思源宋体.otf") format('opentype');
-//  font-style: normal;
-//  font-weight: normal;
-//}
+@font-face {
+  font-family: 'custom-font';
+  // ttf 字体使用这行
+  //noinspection CssUnknownTarget
+  src: url("./fonts/SourceHanSansSC-VF.ttf") format('truetype');
+  // oft 字体使用这行
+  //src: url("./fonts/SourceHanSansSC-VF.otf") format('opentype');
+  font-style: normal;
+  font-weight: normal;
+}
 
 .custom-button {
   all: unset;

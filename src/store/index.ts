@@ -16,7 +16,7 @@ export const state = useStorage('state', {
   config: {
     fontSize: 24,
     serverUrl: 'http://192.168.31.205:1122',
-    fontFamily: '思源宋体',
+    fontFamily: 'custom-font',
   },
   readingBook: {} as BookInfo,
 });
