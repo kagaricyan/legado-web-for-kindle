@@ -3,6 +3,9 @@
 
 name: Node.js CI
 
+permissions:
+  contents: write
+
 on:
   push:
     tags: 
@@ -28,8 +31,6 @@ jobs:
     - run: zip -r html.zip dist
     - name: Create Release  
       uses: softprops/action-gh-release@v1
-      permissions:
-        contents: write
       with:  
         files: html.zip
 
