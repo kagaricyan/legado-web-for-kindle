@@ -21,16 +21,50 @@ html, body {
 }
 
 @font-face {
-  font-family: 'custom-font';
+  font-family: '思源黑体';
   // ttf 字体使用这行
   //noinspection CssUnknownTarget
-  src: url("../fonts/SourceHanSansSC-VF.ttf") format('truetype');
+  src: url("/fonts/思源黑体.ttf") format('truetype');
   // oft 字体使用这行
   //src: url("./fonts/SourceHanSansSC-VF.otf") format('opentype');
   font-style: normal;
   font-weight: normal;
 }
-
+@font-face {
+  font-family: '方正准圆简体';
+  // ttf 字体使用这行
+  //noinspection CssUnknownTarget
+  src: url("/fonts/方正准圆简体.ttf") format('truetype');
+  // oft 字体使用这行
+  //src: url("./fonts/SourceHanSansSC-VF.otf") format('opentype');
+  font-style: normal;
+  font-weight: normal;
+}
+@font-face {
+  font-family: '方正楷体';
+  // ttf 字体使用这行
+  //noinspection CssUnknownTarget
+  src: url("/fonts/方正楷体.ttf") format('truetype');
+  // oft 字体使用这行
+  //src: url("./fonts/SourceHanSansSC-VF.otf") format('opentype');
+  font-style: normal;
+  font-weight: normal;
+}
+.custom-select {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  width: 200px;
+  color: #333;
+  font-size: 16px;
+  padding: 10px 16px;
+  border-width: 2px;
+  border-radius: 4px;
+}
+option {
+  font-size: 22px;
+}
 .custom-button {
   all: unset;
   display: inline-flex;
@@ -44,4 +78,8 @@ html, body {
   border-radius: 4px;
   margin-left: 10px;
   background-color: #fff;
+}
+.custom-checkbox {
+  width: 20px;
+  height: 20px;
 }

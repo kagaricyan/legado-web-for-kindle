@@ -9,7 +9,8 @@ export const state = reactive({
   config: {
     fontSize: 24,
     serverUrl: 'http://192.168.31.205:1122',
-    fontFamily: 'custom-font',
+    fontFamily: '方正准圆简体',
+    alwaysNextPage: false,
   },
   readingBook: {} as BookInfo,
 });

@@ -97,31 +97,40 @@ const handleSyncChapters = async () => {
   }
   await queryContent(state.readingBook.durChapterIndex);
 };
+
+const prePage = async () => {
+  if (currentPage.value !== 1) {
+    currentPage.value--;
+  } else {
+    await queryContent(state.readingBook.durChapterIndex - 1);
+  }
+};
+const nextPage = async () => {
+  if (pages.value.length > 0 && currentPage.value !== pages.value.length) {
+    currentPage.value++;
+  } else {
+    await queryContent(state.readingBook.durChapterIndex + 1);
+  }
+};
 const handlePage = async (e: MouseEvent) => {
   if (chapterLoading.value) return;
+  if (!bookContentContainer.value) return;
   // 点击位置小于1/3，上翻页
   if (e.clientX < window.innerWidth / 3) {
-    if (bookContentContainer.value) {
-      if (currentPage.value !== 1) {
-        currentPage.value--;
-      } else {
-        await queryContent(state.readingBook.durChapterIndex - 1);
-      }
+    if (state.config.alwaysNextPage) {
+      await nextPage();
+    } else {
+      await prePage();
     }
   }
   // 点击位置大于2/3，下翻页
   else if (e.clientX > window.innerWidth * 2 / 3) {
-    if (bookContentContainer.value) {
-      if (pages.value.length > 0 && currentPage.value !== pages.value.length) {
-        currentPage.value++;
-      } else {
-        await queryContent(state.readingBook.durChapterIndex + 1);
-      }
-    }
+    await nextPage();
   } else {
     toggleMenuVisible(true);
   }
 };
+
 const queryChapterList = async () => {
   try {
     toggleChapterLoading(true);
@@ -217,7 +226,7 @@ onMounted(async () => {
 
       p {
         text-align: justify;
-        line-height: 1.3;
+        line-height: 1.2;
       }
     }
 

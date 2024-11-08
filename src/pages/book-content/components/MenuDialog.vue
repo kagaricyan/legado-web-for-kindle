@@ -9,13 +9,47 @@
       </div>
       <div class="menu-item font-size">
         <div class="name">
-          <span :style="{fontSize: `${state.config.fontSize}px`}">字体大小：</span>
+          <span :style="fontStyle">字体大小：</span>
           <span>{{ state.config.fontSize }}</span>
         </div>
         <div class="control">
           <button class="custom-button" @click="state.config.fontSize--">减小</button>
           <button class="custom-button" @click="state.config.fontSize++">增大</button>
         </div>
+      </div>
+      <div class="menu-item font-size">
+        <div class="name">
+          <span :style="fontStyle">字体设置：</span>
+        </div>
+        <div class="control">
+          <select class="custom-select" v-model="state.config.fontFamily">
+            <option value="思源黑体">思源黑体</option>
+            <option value="方正准圆简体">方正准圆简体</option>
+            <option value="方正楷体">方正楷体</option>
+          </select>
+        </div>
+      </div>
+      <div class="menu-item font-size">
+        <div class="name">
+          <span>翻页控制：</span>
+        </div>
+        <div class="control">
+          <label for="always-next-page">始终下一页(点左边/右边都是下一页)</label>
+          <input class="custom-checkbox"
+                 id="always-next-page"
+                 type="checkbox"
+                 v-model="state.config.alwaysNextPage">
+        </div>
+      </div>
+      <div class="hint">
+        <b>注意事项：</b>
+        <ul>
+          <li>修改字体大小：更改字体大小会回到本章首页，重新分页</li>
+          <li>修改字体：如过刚打开浏览器没多久，需要等一段时间字体才能加载完，才能生效</li>
+          <li>
+            由于计算精度问题，页面上下可能部分露出一点点文字。特别是切换字体后，如果露出的比较多，切换一下上一章/下一章，会使用当前字体重新排版
+          </li>
+        </ul>
       </div>
     </div>
   </div>
@@ -24,11 +58,13 @@
 <script setup lang="ts">
 import { state } from '../../../store';
 import router from '../../../router/router.ts';
+import { computed, ref } from 'vue';
 
 interface Props {
   visible: boolean;
 }
 
+const v = ref(false);
 const props = defineProps<Props>();
 const emits = defineEmits<{
   (e: 'update:visible', res: boolean): void
@@ -36,7 +72,12 @@ const emits = defineEmits<{
   (e: 'next-chapter'): void
 }>();
 
-
+const fontStyle = computed(() => {
+  return {
+    fontFamily: state.config.fontFamily,
+    fontSize: `${state.config.fontSize}px`,
+  };
+});
 const handleClose = () => {
   emits('update:visible', false);
 };
