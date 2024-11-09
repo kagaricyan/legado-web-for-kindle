@@ -22,6 +22,10 @@
         </template>
       </div>
     </div>
+    <footer :style="{fontFamily: state.config.fontFamily}">
+      <span>{{ currentChapterName }}</span>
+      <span>{{ currentPage }}/{{ pages.length + 1 }}</span>
+    </footer>
   </div>
   <menu-dialog
       v-model:visible="menuVisible"
@@ -42,7 +46,7 @@ import { createPage, PageInfo } from '../../utils/novel.ts';
 const computedPageStyle = computed(() => {
   const config = state.config;
   return {
-    bottom: `calc(10px + ${currentPageInfo.value.maskHeight ?? 0}px)`,
+    bottom: `calc(40px + ${currentPageInfo.value.maskHeight ?? 0}px)`,
     fontSize: `${config.fontSize}px`,
     fontFamily: config.fontFamily,
   };
@@ -60,7 +64,7 @@ const bookContentContainer = ref<HTMLDivElement>();
 // 章节内容
 const bookContentStr = ref('');
 // 页面高度
-const pageBottomY = window.innerHeight - 10;
+const pageBottomY = window.innerHeight - 40;
 const [chapterLoading, toggleChapterLoading] = useToggle();
 const [contentLoading, toggleContentLoading] = useToggle();
 const pageHandler = useDebounceFn((e: MouseEvent) => handlePage(e), 300);
@@ -204,13 +208,13 @@ onMounted(async () => {
   width: 100%;
   height: 100%;
   box-sizing: border-box;
-  padding: 10px 20px;
+  padding: 10px 20px 40px;
 
   .page {
     position: fixed;
     top: 10px;
     right: 20px;
-    bottom: 10px;
+    bottom: 40px;
     left: 20px;
     overflow: hidden;
     box-sizing: border-box;
@@ -230,6 +234,22 @@ onMounted(async () => {
       }
     }
 
+  }
+
+  footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: 0 10px;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
   }
 }
 </style>
