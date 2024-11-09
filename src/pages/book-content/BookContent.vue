@@ -1,5 +1,5 @@
 <template>
-  <div class="book-content" @click.stop="pageHandler">
+  <div class="book-content" :class="{'is-kindle': isKindle}" @click.stop="pageHandler">
     <div class="page" :style="computedPageStyle">
       <!--完整文章区域，通过 translateY 向上移动，实现翻页-->
       <div class="book-content-container"
@@ -24,7 +24,7 @@
     </div>
     <footer :style="{fontFamily: state.config.fontFamily}">
       <span>{{ currentChapterName }}</span>
-      <span>{{ currentPage }}/{{ pages.length + 1 }}</span>
+      <span>{{ currentPage }}/{{ pages.length }}</span>
     </footer>
   </div>
   <menu-dialog
@@ -43,6 +43,7 @@ import { useDebounceFn, useToggle } from '@vueuse/core';
 import router from '../../router/router.ts';
 import { createPage, PageInfo } from '../../utils/novel.ts';
 
+const isKindle = navigator.userAgent.includes('Kindle')
 const computedPageStyle = computed(() => {
   const config = state.config;
   return {
@@ -209,6 +210,9 @@ onMounted(async () => {
   height: 100%;
   box-sizing: border-box;
   padding: 10px 20px 40px;
+  &:not(.is-kindle) {
+    background-color: rgb(199,237,204);
+  }
 
   .page {
     position: fixed;
@@ -218,7 +222,6 @@ onMounted(async () => {
     left: 20px;
     overflow: hidden;
     box-sizing: border-box;
-    background-color: #fff;
 
     .book-content-container {
       overflow: hidden;
