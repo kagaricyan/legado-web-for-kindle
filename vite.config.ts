@@ -11,7 +11,7 @@ export default defineConfig({
   plugins: [vuePlugin()],
   css: {},
   build: {
-    target: ['chrome53'],
+    target: ['chrome40'],
     cssCodeSplit: false,
     assetsInlineLimit: 0,
   },
